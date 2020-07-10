@@ -1,6 +1,5 @@
 package com.lambdashane.piggybank.controllers;
 
-
 import com.lambdashane.piggybank.model.Coin;
 import com.lambdashane.piggybank.repositories.CoinRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ public class CoinController
     @Autowired
     CoinRepository coinRepo;
 
-    private List<Coin> findEmployees(
+    private List<Coin> findCoins(
         List<Coin> myList,
         CheckCoin tester)
     {
@@ -34,15 +33,22 @@ public class CoinController
         return tempList;
     }
     //    http://localhost:2019/total
-    @GetMapping(value = "2019/total",
+    @GetMapping(value = "/total",
         produces = {"application/json"})
     public ResponseEntity<?> listAllEmployees()
     {
         List<Coin> myList = new ArrayList<>();
         coinRepo.findAll().iterator().forEachRemaining(myList::add);
 
-        myList.sort((c1, c2) -> c1.getLname().compareToIgnoreCase(c2.getLname()));
-        return new ResponseEntity<>(myList,
-            HttpStatus.OK);
+        double total = 0;
+        for(Coin c : myList)
+        {
+            total = total + (c.getValue() * c.getQuantity());
+            System.out.println(c.getQuantity() + " " +
+                (c.getQuantity() == 1 ? c.getName() : c.getNamepural()));
+        }
+
+        System.out.println("The piggy bank holds " + total);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
